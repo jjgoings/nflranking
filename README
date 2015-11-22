@@ -1,0 +1,2 @@
+This is an attempt to re-do several popular ranking algorithms for the NFL. 
+I was getting increasingly unsatisfied with my old program, because it was not object oriented and very difficult to modify and test.
