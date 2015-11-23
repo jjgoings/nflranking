@@ -12,10 +12,10 @@ class Season(object):
                              week=self._week,
                              kind=self._kind)
 
-    def __init__(self):
-        self._year = 2015   # Any year 2009 to present.
-        self._week = None   # Specify individual weeks as integer.
-        self._kind = 'REG'  # kind = 'REG', 'POST', 'PRE' for reg. season, etc.
+    def __init__(self,year=2015,week=None,kind='REG'):
+        self._year = year   # Any year 2009 to present.
+        self._week = week   # Specify individual weeks as integer.
+        self._kind = kind   # kind = 'REG', 'POST', 'PRE' for reg. season, etc.
         self._teams = nflgame.teams
         self._games = self.update_games()
         self._num_teams = len(self._teams)
@@ -92,7 +92,7 @@ class Season(object):
     def colley(self, weight=None, criteria=None):
         """ Wrapper for Colley rating method """
         # note criteria is useless for colley --- always uses win/loss data
-        self._rating_vector = ranking.massey(self._games,
+        self._rating_vector = ranking.colley(self._games,
                                              self._num_teams,
                                              self._team_dict,
                                              weight,
