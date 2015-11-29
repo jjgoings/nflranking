@@ -140,7 +140,7 @@ def keener(games, num_teams, team_dict, weight_method, criteria):
     t0 = int(games[0].eid[:8])
     tf = int(games[-1].eid[:8])
 
-    epsilon = 1e-10
+    epsilon = 1e-12
     # S_Matrix contains points scored against other teams 
     S_Matrix = np.zeros((num_teams,num_teams))
     a_Matrix = np.zeros((num_teams,num_teams))
@@ -153,8 +153,8 @@ def keener(games, num_teams, team_dict, weight_method, criteria):
         a = team_dict[game.away]
 
         if (criteria == None) or (criteria == 'points'):
-            h_yds = game.score_home  
-            a_yds = game.score_away 
+            h_yds = game.score_home
+            a_yds = game.score_away
         elif criteria == 'total_yards':
             h_yds = game.stats_home[1]
             a_yds = game.stats_away[1]
@@ -167,17 +167,10 @@ def keener(games, num_teams, team_dict, weight_method, criteria):
         else:
             print " Not a valid criteria!"
             # FIXME: better error handling
-
-        if h_yds > a_yds:
-            w = h
-            l = a
-            w_yds = h_yds
-            l_yds = a_yds
-        elif a_yds > h_yds:
-            w = a
-            l = h
-            w_yds = a_yds
-            l_yds = h_yds
+        w = h
+        l = a
+        w_yds = h_yds 
+        l_yds = a_yds 
 
         # games played keeps track of how many games each team has played 
         # (e.g. bye weeks, etc.) so we can normalize at the end.
@@ -195,17 +188,10 @@ def keener(games, num_teams, team_dict, weight_method, criteria):
     # this division performs normalization routine. be careful! must be float.
     a_Matrix = np.divide(a_Matrix,games_played)
     a_Matrix = a_Matrix + epsilon*np.dot(e_vector,e_vector.T)
-    r = e_vector*(1.0/num_teams)
-    for i in xrange(2000):
-        rold = r
-        sig = epsilon*np.dot(e_vector.T,r)
-        r = np.dot((a_Matrix + epsilon*np.dot(e_vector,e_vector.T)),r)
-        v = np.dot(e_vector.T,np.dot((a_Matrix + epsilon*np.dot(e_vector,e_vector.T)),r))
-        r = r/v
-        if np.linalg.norm(r-rold) < 1.00e-14:
-            break 
-        if i == 1999:
-            print "didn't converge..."
+    E,R = np.linalg.eig(a_Matrix)
+    idx = np.argmax(E)
+    r = R[:,idx]
+    r = r/np.sum(r) # renormalize
     return r
 
 
