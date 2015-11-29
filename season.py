@@ -2,6 +2,7 @@
 import sys
 import nflgame
 import ranking
+import numpy as np
 
 
 class Season(object):
@@ -27,6 +28,8 @@ class Season(object):
             self._team_dict[str(self._teams[idx][0])] = idx
         self._rating_vector = None
         self._rating = None
+        self._RD = None
+        self._vol = None
 
     @property
     def games(self):
@@ -97,6 +100,30 @@ class Season(object):
                                              self._team_dict,
                                              weight,
                                              criteria)
+
+    def keener(self, weight=None, criteria=None):
+        """ Wrapper for Keener rating method """
+        self._rating_vector = ranking.keener(self._games,
+                                             self._num_teams,
+                                             self._team_dict,
+                                             weight,
+                                             criteria)
+
+    def glicko2(self, criteria=None,rating_vector=None,RD=None,vol=None):
+        """ Wrapper for Glicko2 rating method """
+        if rating_vector is None:
+            rating_vector = np.ones(self._num_teams)*1500
+        if RD is None:
+            RD = np.ones(self._num_teams)*250
+        if vol is None:
+            vol = np.ones(self._num_teams)*0.08
+        self._rating_vector,self._RD,self._vol = ranking.glicko2(self._games,
+                                                     self._num_teams,
+                                                     self._team_dict,
+                                                     criteria,
+                                                     rating_vector,
+                                                     RD,
+                                                     vol)
 
 
 def main():
