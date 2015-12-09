@@ -109,6 +109,18 @@ class Season(object):
                                              weight,
                                              criteria)
 
+    def reorder(self, weight=None, criteria=None):
+        """ Wrapper for Reorder rating method """
+        #FIXME: not currently working.
+        self.colley()
+        init = self._rating_vector.argsort()[::-1]
+        self._rating_vector = ranking.reorder(self._games,
+                                              self._num_teams,
+                                              self._team_dict,
+                                              weight,
+                                              criteria,
+                                              init)
+
     def glicko2(self, criteria=None,rating_vector=None,RD=None,vol=None):
         """ Wrapper for Glicko2 rating method """
         if rating_vector is None:
@@ -124,7 +136,6 @@ class Season(object):
                                                      rating_vector,
                                                      RD,
                                                      vol)
-
 
 def main():
     """Main entry. Prints ranked teams in order."""
