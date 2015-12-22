@@ -80,7 +80,7 @@ class Season(object):
     def rating(self):
         result = []
         for i in xrange(self._num_teams):
-            result.append([self._team_dict[i], self._rating_vector[i]])
+            result.append([self._team_dict[i], self._rating_vector[i], self._RD[i]])
         self._rating = sorted(result, key=lambda x: x[1], reverse=True)
         return self._rating
 
@@ -126,9 +126,9 @@ class Season(object):
         if rating_vector is None:
             rating_vector = np.ones(self._num_teams)*1500
         if RD is None:
-            RD = np.ones(self._num_teams)*250
+            RD = np.ones(self._num_teams)*350
         if vol is None:
-            vol = np.ones(self._num_teams)*0.08
+            vol = np.ones(self._num_teams)*0.1
         self._rating_vector,self._RD,self._vol = ranking.glicko2(self._games,
                                                      self._num_teams,
                                                      self._team_dict,

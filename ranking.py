@@ -345,7 +345,7 @@ def reorder(games, num_teams, team_dict, weight_method, criteria, init):
 
 
 def glicko2(games,num_teams,team_dict,criteria,rating,RD,vol):
-    eps = 0.0000000001
+    eps = 0.000000000001
     tau = 0.3 
     #rating = np.ones(num_teams)*1500
     #RD = np.ones(num_teams)*150
@@ -354,6 +354,8 @@ def glicko2(games,num_teams,team_dict,criteria,rating,RD,vol):
     Score_Matrix = np.zeros((num_teams,num_teams))
     s = np.zeros((num_teams,num_teams))
     p = np.zeros((num_teams,num_teams))
+    e_vector = np.ones(num_teams)
+
     for game in games: 
         h = team_dict[game.home]
         a = team_dict[game.away]
@@ -387,6 +389,7 @@ def glicko2(games,num_teams,team_dict,criteria,rating,RD,vol):
 
         p[w,l] = 1.0
         p[l,w] = 1.0
+
         #Score_Matrix[w,l] += 2.0
         #Score_Matrix[l,w] += 1.0
         Score_Matrix[w,l] += w_yds
@@ -394,6 +397,8 @@ def glicko2(games,num_teams,team_dict,criteria,rating,RD,vol):
                              
         s[w,l] = ((Score_Matrix[w,l] + 1.0)/(Score_Matrix[w,l] + Score_Matrix[l,w] + 2.0))
         s[l,w] = ((Score_Matrix[l,w] + 1.0)/(Score_Matrix[l,w] + Score_Matrix[w,l] + 2.0))
+    #s = Keener_skew(s)
+    #s  = s + 0.00000001*np.dot(e_vector,e_vector.T)
     rating,RD,vol,E = g2.main_update(rating,RD,vol,s,p,tau,eps)
     return rating,RD,vol
 
