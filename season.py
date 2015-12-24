@@ -80,7 +80,8 @@ class Season(object):
     def rating(self):
         result = []
         for i in xrange(self._num_teams):
-            result.append([self._team_dict[i], self._rating_vector[i], self._RD[i]])
+            #result.append([self._team_dict[i], self._rating_vector[i], self._RD[i]])
+            result.append([self._team_dict[i], self._rating_vector[i]])
         self._rating = sorted(result, key=lambda x: x[1], reverse=True)
         return self._rating
 
@@ -109,17 +110,18 @@ class Season(object):
                                              weight,
                                              criteria)
 
-    def reorder(self, weight=None, criteria=None):
-        """ Wrapper for Reorder rating method """
-        #FIXME: not currently working.
-        self.colley()
-        init = self._rating_vector.argsort()[::-1]
-        self._rating_vector = ranking.reorder(self._games,
-                                              self._num_teams,
-                                              self._team_dict,
-                                              weight,
-                                              criteria,
-                                              init)
+    def glicko(self, criteria=None,rating_vector=None,RD=None):
+        """ Wrapper for Glicko rating method """
+        if rating_vector is None:
+            rating_vector = np.ones(self._num_teams)*1500
+        if RD is None:
+            RD = np.ones(self._num_teams)*350
+        self._rating_vector,self._RD = ranking.glicko(self._games,
+                                                     self._num_teams,
+                                                     self._team_dict,
+                                                     criteria,
+                                                     rating_vector,
+                                                     RD)
 
     def glicko2(self, criteria=None,rating_vector=None,RD=None,vol=None):
         """ Wrapper for Glicko2 rating method """
@@ -128,7 +130,7 @@ class Season(object):
         if RD is None:
             RD = np.ones(self._num_teams)*350
         if vol is None:
-            vol = np.ones(self._num_teams)*0.1
+            vol = np.ones(self._num_teams)*0.12
         self._rating_vector,self._RD,self._vol = ranking.glicko2(self._games,
                                                      self._num_teams,
                                                      self._team_dict,

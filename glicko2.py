@@ -26,8 +26,8 @@ def convert_rating(rating):
 def convert_RD(RD):
     return RD/173.7178
 
-s = np.array([[0.,1.,0.,0.],[0.,0.,0.,0.],[1.,0.,0.,0.],[1.,0.,0.,0.]])
-p = np.array([[0.,1.,1.,1.],[1.,0.,0.,0.],[1.,0.,0.,0.],[1.,0.,0.,0.]])
+#s = np.array([[0.,1.,0.,0.],[0.,0.,0.,0.],[1.,0.,0.,0.],[1.,0.,0.,0.]])
+#p = np.array([[0.,1.,1.,1.],[1.,0.,0.,0.],[1.,0.,0.,0.],[1.,0.,0.,0.]])
 
 #####
 
@@ -54,8 +54,10 @@ def make_v(p,gphi,E,num_teams):
 
 def make_delta(p,gphi,E,s,v,num_teams):
     delta = np.zeros(num_teams)
-    for i in range(4):
-        for j in range(4):
+#    for i in range(4):
+#        for j in range(4):
+    for i in range(num_teams):
+        for j in range(num_teams):
             delta[i] += gphi[j]*(s[i,j]-E[i,j])*p[i,j]
         delta[i] *= v[i]
     return delta
@@ -93,6 +95,8 @@ def update_vol(i,tau,eps,sig,phi,delta,v):
 
 def update_phi(i,phi,sig,v):
     phi_new = np.sqrt(phi[i]**2 + sig[i]**2)
+    if v[i] == 0.0:
+        v[i] = 0.00000001
     phi_new = 1./(np.sqrt((1./phi_new**2) + 1./v[i]))
     return phi_new
 
